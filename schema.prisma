@@ -18,3 +18,12 @@ model User {
   password  String
   createdAt DateTime? @default(now())
 }
+
+model Photo {
+  id              String  @id @default(cuid())
+  image_id        String?
+  image_filesize  Int?
+  image_width     Int?
+  image_height    Int?
+  image_extension String?
+}

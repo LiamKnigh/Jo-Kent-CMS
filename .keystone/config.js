@@ -29,16 +29,17 @@ var import_core2 = require("@keystone-6/core");
 var import_core = require("@keystone-6/core");
 var import_fields = require("@keystone-6/core/fields");
 var loggedIn = ({ session: session2 }) => Boolean(session2);
+var generalAccess = {
+  operation: {
+    query: loggedIn,
+    create: loggedIn,
+    update: loggedIn,
+    delete: loggedIn
+  }
+};
 var lists = {
   User: (0, import_core.list)({
-    access: {
-      operation: {
-        query: loggedIn,
-        create: loggedIn,
-        update: loggedIn,
-        delete: loggedIn
-      }
-    },
+    access: generalAccess,
     fields: {
       name: (0, import_fields.text)({ validation: { isRequired: true } }),
       email: (0, import_fields.text)({
@@ -49,6 +50,12 @@ var lists = {
       createdAt: (0, import_fields.timestamp)({
         defaultValue: { kind: "now" }
       })
+    }
+  }),
+  Photo: (0, import_core.list)({
+    access: generalAccess,
+    fields: {
+      image: (0, import_fields.image)({ storage: "photos" })
     }
   })
 };
@@ -81,7 +88,16 @@ var keystone_default = withAuth(
       url: "file:./keystone.db"
     },
     lists,
-    session
+    session,
+    storage: {
+      photos: {
+        kind: "local",
+        type: "image",
+        generateUrl: (path) => `http://localhost:3000/photo${path}`,
+        serverRoute: { path: "/photo" },
+        storagePath: "storage/photos"
+      }
+    }
   })
 );
 //# sourceMappingURL=config.js.map

@@ -1,5 +1,5 @@
 import { list } from "@keystone-6/core";
-import { text, password, timestamp } from "@keystone-6/core/fields";
+import { text, password, timestamp, image } from "@keystone-6/core/fields";
 import type { Lists } from ".keystone/types";
 
 type Session = {
@@ -10,16 +10,18 @@ type Session = {
 
 const loggedIn = ({ session }: { session?: Session }) => Boolean(session)
 
+const generalAccess = {
+    operation: {
+        query: loggedIn,
+        create: loggedIn,
+        update: loggedIn,
+        delete: loggedIn
+    }
+}
+
 export const lists: Lists = {
     User: list({
-        access: {
-            operation: {
-                query: loggedIn,
-                create: loggedIn,
-                update: loggedIn,
-                delete: loggedIn
-            }
-        },
+        access: generalAccess,
         fields: {
             name: text({ validation: { isRequired: true } }),
             email: text({
@@ -32,4 +34,10 @@ export const lists: Lists = {
             }),
         },
     }),
+    Photo: list({
+        access: generalAccess,
+        fields: {
+            image: image({storage: 'photos'})
+        }
+    })
 };
